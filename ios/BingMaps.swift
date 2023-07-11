@@ -101,8 +101,8 @@ class BingMaps: MSMapView {
       return true;
     }
       
-      self.addUserDidTapHandler{(point:CGPoint, location:MSGeopoint?) -> Bool in
-          self.onMapClicked(geoPoint: location);
+      self.addUserDidTapHandler { (point, location) -> Bool in
+          self.onMapClickedHandler(geoPoint: location!);
           return true;
       }
 
@@ -151,14 +151,14 @@ class BingMaps: MSMapView {
     }
   }
     
-  func onMapClicked (geoPoint: MSGeopoint){
-      let lat = geoPoint.position.latitude;
-      let long = geoPoint.position.longitude;
-      let zoom = self.zoomLevel;
-      let location: NSDictionary = ["lat": lat, "long":long, "zoom":zoom];
+    func onMapClickedHandler (geoPoint: MSGeopoint){
+        let lat = geoPoint.position.latitude;
+        let long = geoPoint.position.longitude;
+        let zoom = self.zoomLevel;
+        let location: NSDictionary = ["lat": lat, "long":long, "zoom":zoom];
 
-      if self.onMapClicked != nil {
-        self.onMapClicked!(["location": location]);
-      }
-  }
+        if self.onMapClicked != nil {
+            self.onMapClicked!(["location": location]);
+        }
+    }
 }
