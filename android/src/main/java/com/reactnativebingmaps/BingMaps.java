@@ -27,6 +27,8 @@ import com.microsoft.maps.MapStyleSheet;
 import com.microsoft.maps.MapView;
 import com.microsoft.maps.OnMapElementTappedListener;
 import com.microsoft.maps.OnMapLoadingStatusChangedListener;
+import com.microsoft.maps.MapTappedEventArgs;
+import com.microsoft.maps.OnMapTappedListener;
 
 public class BingMaps extends MapView {
   MapElementLayer mapElementLayer;
@@ -135,6 +137,27 @@ public class BingMaps extends MapView {
     });
     this.getLayers().add(mapElementLayer);
 
+    this.addOnMapTappedListener(new OnMapTappedListener() {
+      @Override
+      public boolean onMapTapped(MapTappedEventArgs mapTappedEventArgs) {
+
+        double lat = mapTappedEventArgs.location.getPosition().getLatitude();
+        double lon = mapTappedEventArgs.location.getPosition().getLongitude();
+
+        WritableMap event = Arguments.createMap();
+        WritableMap location = Arguments.createMap();
+        location.putDouble("lat", lat);
+        location.putDouble("long", lon);
+        event.putMap("location", location);
+
+        reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
+          getId(),
+          "onMapClicked",
+          event
+        );
+        return true;
+      }
+    });
   }
 
 }

@@ -77,7 +77,11 @@ public class BingMapsViewManager extends SimpleViewManager<BingMaps> {
   @Override
   @Nullable
   public Map getExportedCustomBubblingEventTypeConstants(){
-    return MapBuilder.builder().put("onMapPinClicked", MapBuilder.of("phasedRegistrationNames",MapBuilder.of("bubbled", "onMapPinClicked"))).put("onMapLoadingStatusChanged", MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", "onMapLoadingStatusChanged"))).build();
+    return MapBuilder.builder()
+      .put("onMapPinClicked", MapBuilder.of("phasedRegistrationNames",MapBuilder.of("bubbled", "onMapPinClicked")))
+      .put("onMapLoadingStatusChanged", MapBuilder.of("phasedRegistrationNames", MapBuilder.of("bubbled", "onMapLoadingStatusChanged")))
+      .put("onMapClicked", MapBuilder.of("phasedRegistrationNames",MapBuilder.of("bubbled", "onMapClicked")))
+      .build();
   }
 
   @Override
