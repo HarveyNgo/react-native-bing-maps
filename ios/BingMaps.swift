@@ -15,10 +15,16 @@ class BingMaps: MSMapView {
   @objc var onMapPinClicked: RCTDirectEventBlock?;
   @objc var onMapLoadingStatusChanged: RCTDirectEventBlock?;
   @objc var onMapClicked: RCTDirectEventBlock?;
+  var myMapPin: MSMapIcon = MSMapIcon();
   
   @objc var pins: NSArray = [] {
     didSet {
       self.setMapPins(pinData: pins);
+    }
+  }
+  @objc var pinIcon: NSString = "" {
+    didSet {
+      self.setPinIcon(pinIconString: pinIcon as! String);
     }
   }
   
@@ -37,6 +43,8 @@ class BingMaps: MSMapView {
       }
     }
   }
+
+
   
     @objc override var credentialsKey: String {
         didSet{}
@@ -88,6 +96,7 @@ class BingMaps: MSMapView {
     self.tiltButtonVisible=true;
     self.zoomButtonsVisible=true;
     self.copyrightDisplay="always";
+    self.pinIcon="";
     super.init(frame: frame);
     
     self.layers.add(mapElementLayer);
@@ -101,10 +110,15 @@ class BingMaps: MSMapView {
       return true;
     }
       
-      self.addUserDidTapHandler { (point, location) -> Bool in
-          self.onMapClickedHandler(geoPoint: location!);
-          return true;
-      }
+    self.addUserDidTapHandler { (point, location) -> Bool in
+        self.mapElementLayer.elements.clear();
+        let lat = location!.position.latitude;
+        let long = location!.position.longitude;
+        self.myMapPin.location  = MSGeopoint(latitude: lat as! CLLocationDegrees, longitude: long as! CLLocationDegrees);
+        self.mapElementLayer.elements.add(self.myMapPin);
+        self.onMapClickedHandler(geoPoint: location!);
+        return true;
+    }
 
   }
   
@@ -125,7 +139,6 @@ class BingMaps: MSMapView {
       mapPin.location = MSGeopoint(latitude: (pin as! NSDictionary).value(forKey: "lat") as! CLLocationDegrees, longitude: (pin as! NSDictionary).value(forKey: "long") as! CLLocationDegrees);
       let svgString: String = (pin as! NSDictionary).value(forKey: "icon") as! String;
       let svgData = Data(svgString.utf8);
-            
       let pinIcon: MSMapImage = MSMapImage.init(fromSvg: svgData);
       
       mapPin.image = pinIcon;
@@ -161,4 +174,14 @@ class BingMaps: MSMapView {
             self.onMapClicked!(["location": location]);
         }
     }
+
+  func setPinIcon(pinIconString: String){
+    let svgData = Data(pinIconString.utf8);
+    let pinIcon: MSMapImage = MSMapImage.init(fromSvg: svgData);
+     if myMapPin == nil {
+        myMapPin = MSMapIcon();
+    }
+    myMapPin.image = pinIcon;
+    return;
+  }
 }

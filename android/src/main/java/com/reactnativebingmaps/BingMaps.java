@@ -34,6 +34,7 @@ public class BingMaps extends MapView {
   MapElementLayer mapElementLayer;
   MapStyleSheet mapStyleSheet;
   BingMaps that;
+  MapIcon myPushPin =new MapIcon();
 
   public void setMapStyle(String styleJSON){
     mapStyleSheet = MapStyleSheet.fromJson(styleJSON);
@@ -150,6 +151,12 @@ public class BingMaps extends MapView {
         location.putDouble("long", lon);
         event.putMap("location", location);
 
+        Geopoint pinLocation = new Geopoint(lat, lon);
+        myPushPin.setLocation(pinLocation);
+
+        mapElementLayer.getElements().clear();
+        mapElementLayer.getElements().add(myPushPin);
+
         reactContext.getJSModule(RCTEventEmitter.class).receiveEvent(
           getId(),
           "onMapClicked",
@@ -158,6 +165,25 @@ public class BingMaps extends MapView {
         return true;
       }
     });
+  }
+
+
+  public void setPinIcon(String pinIcon) {
+    SVG svg = null;
+    try {
+      svg = SVG.getFromString(pinIcon);
+    } catch (SVGParseException e) {
+      e.printStackTrace();
+    }
+    svg.setDocumentHeight(70);
+    svg.setDocumentWidth(70);
+    PictureDrawable drawable = new PictureDrawable(svg.renderToPicture());
+    Bitmap pinBitmap = Bitmap.createBitmap(drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+    Canvas canvas = new Canvas(pinBitmap);
+    canvas.drawPicture(drawable.getPicture());
+    MapImage mapImage = new MapImage(pinBitmap);
+
+    myPushPin.setImage(mapImage);
   }
 
 }

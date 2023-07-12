@@ -89,4 +89,10 @@ public class BingMapsViewManager extends SimpleViewManager<BingMaps> {
     Activity activity = reactContext.getCurrentActivity();
     return new BingMaps(activity, reactContext);
   }
+
+
+  @ReactProp(name = "pinIcon")
+  public void setPins(BingMaps bingMaps, String pinIcon) {
+    bingMaps.setPinIcon(pinIcon);
+  }
 }
